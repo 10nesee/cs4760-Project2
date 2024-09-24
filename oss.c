@@ -29,7 +29,7 @@ clock[0] = 0;
 clock[1] = 0;
 printf("second: %d nanosecond: %d\n", clock[0], clock[1]);
 
-// shmdt(clock);
+shmdt(clock);
 return 0;
 }
 
