@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <sys/shm.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
+
 
 #define SHMKEY 12345678 // unique key
 #define CLOCK_SIZE sizeof(int)*2 //
@@ -69,6 +72,51 @@ exit(1);
 clock[0] = 0;
 clock[1] = 0;
 
+// Fork process
+int active_workers = 0;
+
+for (int i = 0; i < proc; i++) {
+        if (active_workers >= simul) {
+            // Wait for worker before fork
+            pid_t pid = waitpid(-1, NULL, 0);
+            if (pid > 0) {
+                active_workers--;
+            }
+        }
+
+        // Fork new worker
+        pid_t pid = fork();
+        if (pid < 0) {
+            perror("Fork error");
+            exit(1);
+        }
+
+        if (pid == 0) {
+            // Child process exec the worker
+            char max_sec[10], max_nsec[10];
+            sprintf(max_sec, "%d", timelimit); 
+            sprintf(max_nsec, "500000");       
+
+            execl("./worker", "worker", max_sec, max_nsec, (char *)NULL);
+            perror("Exec error");
+            exit(1);
+        } else {
+            // Parent process
+            printf("Parent: Forked worker %d with PID %d\n", i + 1, pid);
+            active_workers++;
+        }
+
+        // Sleep before next process
+        usleep(interval * 1000); // Convert milliseconds to microseconds
+    }
+
+	// Wait for worker processes to finish
+    	while (active_workers > 0) {
+        pid_t pid = waitpid(-1, NULL, 0);
+        if (pid > 0) {
+            active_workers--;
+        }
+    }
 
 shmdt(clock);
 return 0;
