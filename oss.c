@@ -10,11 +10,12 @@
 
 
 int main(int argc, char *argv[]) {
-    // Command-line arguments and their defaults
-    int proc = 1;  // Default number of processes
-    int simul = 2; // Default number of simultaneous workers
-    int timelimit = 3; // Default time limit for children
-    int interval = 50;  // Default interval in milliseconds
+
+    // Command-line arguments
+    int proc = 1;  
+    int simul = 2; 
+    int timelimit = 3; 
+    int interval = 50; 
 
     // Parse arguments using getopt
     int opt;
@@ -67,7 +68,7 @@ exit(1);
 // Clock for second and nanosecond
 clock[0] = 0;
 clock[1] = 0;
-printf("second: %d nanosecond: %d\n", clock[0], clock[1]);
+
 
 shmdt(clock);
 return 0;
