@@ -56,14 +56,14 @@ while (1) {
         printf("WORKER PID: %d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d --Terminating\n", getpid(), clock[0], clock[1], term_seconds, term_nanoseconds);
         break;
 
-    // Periodically print status if a second has passed
+    // Print status if a second has passed
         if (clock[0] > start_seconds) {
             printf("WORKER PID: %d SysClockS: %d SysClockNano: %d TermTimeS: %d TermTimeNano: %d --%d seconds have passed since starting\n",
                    getpid(), clock[0], clock[1], term_seconds, term_nanoseconds, clock[0] - start_seconds);
             start_seconds = clock[0]; // Update to avoid printing the same second again
         }
 }
-        // Avoid tight looping
+        // Create time for loop
         usleep(1000);  // Sleep for 1 millisecond
 
 }
